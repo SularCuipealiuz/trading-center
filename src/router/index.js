@@ -1,6 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import Header from "@/components/Header";
+import BankTransfer from "@/views/BankTransfer";
 
 Vue.use(VueRouter);
 
@@ -8,16 +10,18 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home
+    components: {
+      head: Header,
+      body: Home
+    }
   },
   {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
+    path: "/bank-transfer",
+    name: "BankTransfer",
+    components: {
+      head: Header,
+      body: BankTransfer
+    }
   }
 ];
 
@@ -26,5 +30,14 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
+
+router.beforeEach(function (to, from, next) {
+  if (from.name === null && to.name !== "Home") {
+    next("/");
+  } else {
+    next()
+  }
+});
+
 
 export default router;
