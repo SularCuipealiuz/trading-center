@@ -1,8 +1,12 @@
 <template>
   <section>
     <v-container class="py-0">
-      <span class="main-color caption">请复制下方讯息，进行转帐</span>
       <v-card elevation="1" class="pa-3 mt-2 rounded-lg">
+        <div class="d-flex justify-center align-center flex-column">
+          <img class="mb-4" src="../assets/svg/icon-s-confirm.svg" alt="">
+          <span class="subtitle-2 font-weight-bold">恭喜您，您的存款申请已提交。</span>
+        </div>
+        <v-divider class="mb-8 mt-4"></v-divider>
         <div class="mb-1 d-flex justify-space-between align-center">
           <div>
             <span class="main-color subtitle-2">转账银行：</span>
@@ -34,62 +38,26 @@
         <div class="mb-1 d-flex justify-space-between align-center">
           <div>
             <span class="main-color subtitle-2">金额：</span>
-            <span class="subtitle-2">{{ list["amount"] }}</span>
+            <span class="subtitle-2">{{ channelItem["amount"] }}</span>
           </div>
           <v-btn tile outlined x-small class="copy-btn" @click="copyValue(list.amount)">复制</v-btn>
         </div>
       </v-card>
+      <div class="mt-3 main-color caption">我们正在处理您的存款申请，请您耐心等待！</div>
     </v-container>
-    <div class="white mt-3 pt-2">
-      <v-text-field
-          class="mt-2 input-panel caption"
-          label="存款银行"
-          placeholder="请选择"
-          prepend-icon="*"
-          append-outer-icon="far fa-chevron-left"
-          readonly
-          hide-details
-          v-model="bankItem"
-          @click="$store.dispatch('toggleBankList', true)"
-      ></v-text-field>
-      <v-divider class="mx-3"></v-divider>
-      <v-text-field
-          class="mt-4 input-panel caption"
-          label="存款银行帐号"
-          placeholder="请输入存款银行帐号"
-          prepend-icon="*"
-          hide-details
-          v-model="bankForm.account"
-      ></v-text-field>
-      <v-divider class="mx-3"></v-divider>
-      <v-text-field
-          class="mt-4 input-panel caption"
-          label="存款人姓名"
-          placeholder="为及时到账，请务必输入正确存款人真实姓名"
-          prepend-icon="*"
-          hide-details
-          v-model="bankForm.accountName"
-      ></v-text-field>
-      <v-divider class="mx-3"></v-divider>
-      <v-text-field
-          class="mt-4 input-panel caption"
-          label="备注"
-          placeholder="转帐後填寫備註內容，更快到账"
-          prepend-icon=" "
-          hide-details
-          v-model="bankForm.memberNote"
-      ></v-text-field>
-      <v-divider class="mx-3"></v-divider>
-    </div>
     <div class="px-3 mt-4">
-      <v-btn class="btn-bg" dark block elevation="0" height="44" @click="submit">提交存款</v-btn>
+      <v-btn class="btn-outline btn-radius mb-3" outlined block elevation="0" height="44" @click="leaveDeposit">回首頁</v-btn>
+
+      <v-btn class="btn-radius btn-bg" dark block elevation="0" height="44" @click="leaveDepositAndGotoTradeRecords">存款紀錄</v-btn>
+    </div>
+    <div class="mt-5 caption text-center">如需帮助，请
+      <span class="text-decoration-underline" style="color: #c09267;">联系客服</span>
     </div>
   </section>
 </template>
 
 <script>
 import copy from "copy-to-clipboard";
-import {bankList, submitDeposit} from "@/api";
 import {mapGetters} from "vuex";
 
 export default {
@@ -102,7 +70,7 @@ export default {
   },
   data() {
     return {
-      list: this.$route.params.channelInfo,
+      list: this.$route.params.receiveInfo,
       channelItem: this.$route.params,
       bankForm: {
         uid: "",
@@ -116,11 +84,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch("setPageTitle", "银行转账");
-
-    bankList().then(res => {
-      this.$store.dispatch("setBankList", res)
-    })
+    console.log(this.$route.params)
   },
   methods: {
     copyValue(val) {
@@ -128,17 +92,26 @@ export default {
         console.log('111')
       }
     },
-    submit() {
-      this.bankForm.bankName = this.bankItem
-      this.bankForm.channelId = this.channelItem.id
-      this.bankForm.uid = this.userInfo.userId
-      this.bankForm.amount = Number(this.list.amount)
-
-      submitDeposit(this.bankForm).then(res => {
-        console.log('res', res)
-        this.$router.push({name: "Complete", params: res})
-
-      })
+    leaveDeposit() {
+      let u = navigator.userAgent;
+      let isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1;
+      let isPhone = u.indexOf('iPhone') > -1
+      if (isAndroid) {
+        window.jsInterface.leaveDeposit()
+      } else if (isPhone) {
+        location.href = "lyBw://leaveDeposit"
+      } else {
+        location.href = "http://192.168.0.122:8081/"
+      }
+    },
+    leaveDepositAndGotoTradeRecords(){
+      let u = navigator.userAgent;
+      let isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1;
+      if (isAndroid) {
+        window.jsInterface.leaveDepositAndGotoTradeRecords()
+      } else {
+        location.href = "lybw://leaveDepositAndGotoTradeRecords"
+      }
     }
   }
 }
@@ -165,7 +138,15 @@ export default {
 
 .btn-bg {
   background: rgba(210, 183, 156, 0.5) !important;
+}
+
+.btn-radius {
   border-radius: 10px;
+}
+
+.btn-outline {
+  border-color: #c09267 !important;
+  color: #c09267 !important;
 }
 </style>
 

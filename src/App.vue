@@ -67,11 +67,20 @@ export default {
     showAlert: false
   }),
   created() {
-    const token = "Bearer " + getToken();
+    let token = ""
+    const url = new URL(location.href)
+    if (url.searchParams.get('token') !== null) {
+      token = "Bearer " + url.searchParams.get('token');
+    } else if (sessionStorage.getItem('token') !== null && sessionStorage.getItem('token') !== undefined) {
+      token = "Bearer " + sessionStorage.getItem('token');
+    } else if (getToken() !== undefined && getToken() !== null) {
+      token = "Bearer " + getToken();
+    }
     verify({
       token: token
     }).then(res => {
-      console.log('res', res)
+      this.$store.dispatch('setUserInfo', res)
+      console.log('test:', res)
     })
   },
   mounted() {

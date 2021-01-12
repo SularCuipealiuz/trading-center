@@ -42,7 +42,7 @@ export function submitDeposit(data) {
 
 export function bankList() {
   return request({
-    url: "/tenantManage/dic/withdraw/initBank",
+    url: "/memberWeb/withdraw/initBank",
     method: "post"
   });
 }

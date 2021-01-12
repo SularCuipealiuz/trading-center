@@ -9,7 +9,8 @@ export default new Vuex.Store({
     showAlert: false,
     bankList: [],
     bankListPanel: false,
-    bankItem: null
+    bankItem: null,
+    userInfo: null
   },
   mutations: {
     SET_PAGE_TITLE(state, title) {
@@ -26,6 +27,9 @@ export default new Vuex.Store({
     },
     SELECT_BANK_ITEM(state, payload) {
       state.bankItem = payload
+    },
+    SET_USER_INFO(state, payload) {
+      state.userInfo = payload
     }
   },
   actions: {
@@ -43,6 +47,9 @@ export default new Vuex.Store({
     },
     selectBankItem({commit}, payload) {
       commit("SELECT_BANK_ITEM", payload);
+    },
+    setUserInfo({commit}, payload) {
+      commit("SET_USER_INFO", payload);
     }
   },
   modules: {},
@@ -61,6 +68,9 @@ export default new Vuex.Store({
     },
     getBankItem(state) {
       return state.bankItem
+    },
+    getUserInfo(state) {
+      return state.userInfo
     }
   }
 });

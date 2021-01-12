@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Header from "@/components/Header";
 import BankTransfer from "@/views/BankTransfer";
+import Complete from "@/views/Complete";
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,14 @@ const routes = [
     components: {
       head: Header,
       body: BankTransfer
+    }
+  },
+  {
+    path: "/complete",
+    name: "Complete",
+    components: {
+      head: Header,
+      body: Complete
     }
   }
 ];
